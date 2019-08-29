@@ -5,7 +5,7 @@ module.exports = {
   port: '5434',
   username: 'postgres',
   password: 'admin',
-  database: 'meetup',
+  database: 'meetapp',
   define: {
     timestamps: true,
     underscored: true,
