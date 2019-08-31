@@ -1,11 +1,36 @@
-import { isBefore, parseISO } from 'date-fns';
+import { isBefore, parseISO, startOfDay, endOfDay } from 'date-fns';
+import { Op } from 'sequelize';
 import * as Yup from 'yup';
 import Meetup from '../models/Meetup';
+import User from '../models/User';
 
 class MeetupController {
   async index(req, res) {
+    const { date, page = 1 } = req.query;
+
+    if (!date) {
+      return res
+        .status(400)
+        .json({ error: 'The request must contains a date param' });
+    }
+
+    // const searchDate = Number(date);
+    // console.log(startOfDay(parseISO(date)), endOfDay(parseISO(date)));
+
     const meetups = await Meetup.findAll({
-      where: { user_id: req.userId },
+      where: {
+        user_id: req.userId,
+        date: {
+          [Op.between]: [startOfDay(parseISO(date)), endOfDay(parseISO(date))],
+        },
+      },
+      order: ['date'],
+      limit: 10,
+      offset: (page - 1) * 10,
+      include: {
+        model: User,
+        as: 'user',
+      },
     });
 
     return res.json(meetups);

@@ -1,7 +1,10 @@
 import express from 'express';
 import routes from './routes';
+import 'express-async-errors';
 
 import './database';
+
+require('dotenv').config();
 
 class App {
   constructor() {
